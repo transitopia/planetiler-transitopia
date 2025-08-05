@@ -40,8 +40,12 @@ jobs:
     env:
       RCLONE_CONFIG_TRANSITOPIA_MAPS_R2_TYPE: s3
       RCLONE_CONFIG_TRANSITOPIA_MAPS_R2_PROVIDER: Cloudflare
-      # Other rclone config variables are private
+      RCLONE_CONFIG_TRANSITOPIA_MAPS_R2_ENDPOINT: ${{ secrets.RCLONE_CONFIG_TRANSITOPIA_MAPS_R2_ENDPOINT }}
+      RCLONE_CONFIG_TRANSITOPIA_MAPS_R2_ACCESS_KEY_ID: ${{ secrets.RCLONE_CONFIG_TRANSITOPIA_MAPS_R2_ACCESS_KEY_ID }}
+      RCLONE_CONFIG_TRANSITOPIA_MAPS_R2_SECRET_ACCESS_KEY: ${{ secrets.RCLONE_CONFIG_TRANSITOPIA_MAPS_R2_SECRET_ACCESS_KEY }}
     steps:
+      - name: Skip time-consuming man-db update on apt installs
+        run: sudo apt-get remove --purge man-db
       - name: Install rclone
         run: sudo apt install --yes rclone
       - name: Temp test rclone
