@@ -1,0 +1,38 @@
+name: Build Transitopia Cycling Layer
+
+on:
+  push:
+  schedule:
+    # Every day at 09:45 UTC
+    - cron:  '45 9 * * *'
+jobs:
+  Build-Cycling-Layer:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
+      - name: Check out code
+        uses: actions/checkout@v4
+      - name: Compile code
+        run: ./mvnw clean package
+      - name: Ensure fresh OSM data
+        run: rm -f data/sources/british_columbia.osm.pbf
+      - name: Build the map using planetiler
+        run: java -jar target/planetiler-*-with-deps.jar --force --download
+      - name: Store resulting artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: compiled-maps
+          path: data/*.pmtiles
+  Upload:
+    runs-on: ubuntu-latest
+    needs: Build-Cycling-Layer
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download compiled maps
+        uses: actions/download-artifact@v4
+        with:
+          name: compiled-maps
+      - name: renames
+        run: mv data/transitopia-cycling-british-columbia.pmtiles data/transitopia-cycling-bc.pmtiles
+      - name: upload
+        run: rclone copy data/transitopia-cycling-bc.pmtiles transitopia-maps-r2:transitopia-maps/transitopia-cycling-bc.pmtiles --s3-no-check-bucket
