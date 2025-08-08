@@ -22,6 +22,8 @@ public class Cycling implements
     private double BUFFER_SIZE = 4.0;
     // When zoomed out more than this, don't encode details of the cycling paths (makes tiles too big)
     private int MIN_ZOOM_ATTR = 13;
+    // Hide things like bike parking areas below this zoom level.
+    private int MIN_ZOOM_DETAILS = 12;
     private static final String LAYER_NAME = "transitopia_cycling";
     // Minimum lengths for coalescing paths together at specific zoom levels
     private static final ZoomFunction.MeterToPixelThresholds MIN_LENGTH = ZoomFunction.meterThresholds()
@@ -207,7 +209,24 @@ public class Cycling implements
                     newLine.setAttrWithMinzoom("routes", routeIdsString, MIN_ZOOM_ATTR);
                 }
             }
+        } else if (feature.isPoint()) {
+            if (feature.hasTag("amenity", "bicycle_parking")) {
+                features.point(LAYER_NAME)
+                    .setAttr("amenity", "bicycle_parking")
+                    .setAttr("name", feature.getTag("name"))
+                    .setAttr("operator", feature.getTag("operator"))
+                    .setAttr("indoor", feature.getTag("indoor"))
+                    .setAttr("access", feature.getTag("access")) // TODO: validate, rstrict to private/customers/members
+                    .setAttr("capacity", feature.getTag("capacity"))
+                    .setAttr("bicycle_parking", feature.getTag("bicycle_parking")) // TODO: validate and ignore if not a known value
+                    .setAttr("covered", feature.getTag("covered"))
+                    .setAttr("cyclestreets_id", feature.getTag("cyclestreets_id"))
+                    .setAttr("fee", feature.getTag("fee"))
+                    .setMinZoom(MIN_ZOOM_DETAILS);
+            }
+            // TODO: amenity=kick-scooter_parking
         }
+        // TODO: area versions of the point features like parking.
     }
 
     private record RouteRelationInfo(long id) implements OsmRelationInfo {
