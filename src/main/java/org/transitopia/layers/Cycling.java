@@ -210,6 +210,7 @@ public class Cycling implements
                 }
             }
         } else if (feature.isPoint()) {
+            // Find bike rack/parking nodes
             if (feature.hasTag("amenity", "bicycle_parking")) {
                 features.point(LAYER_NAME)
                     .setAttr("amenity", "bicycle_parking")
@@ -218,7 +219,17 @@ public class Cycling implements
                     .setMinZoom(MIN_ZOOM_DETAILS);
             }
         }
-        // TODO: area versions of the point features like parking.
+
+        if (feature.canBePolygon()) {
+            // Find bike rack/parking areas, e.g. https://www.openstreetmap.org/way/697625710
+            if (feature.hasTag("amenity", "bicycle_parking")) {
+                features.centroid(LAYER_NAME)
+                    .setAttr("amenity", "bicycle_parking")
+                    .setAttr("name", feature.getTag("name"))
+                    .setAttr("osmWayId", feature.id())
+                    .setMinZoom(MIN_ZOOM_DETAILS);
+            }
+        }
     }
 
     private record RouteRelationInfo(long id) implements OsmRelationInfo {
