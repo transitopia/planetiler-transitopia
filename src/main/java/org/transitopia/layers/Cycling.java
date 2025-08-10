@@ -214,17 +214,9 @@ public class Cycling implements
                 features.point(LAYER_NAME)
                     .setAttr("amenity", "bicycle_parking")
                     .setAttr("name", feature.getTag("name"))
-                    .setAttr("operator", feature.getTag("operator"))
-                    .setAttr("indoor", feature.getTag("indoor"))
-                    .setAttr("access", feature.getTag("access")) // TODO: validate, rstrict to private/customers/members
-                    .setAttr("capacity", feature.getTag("capacity"))
-                    .setAttr("bicycle_parking", feature.getTag("bicycle_parking")) // TODO: validate and ignore if not a known value
-                    .setAttr("covered", feature.getTag("covered"))
-                    .setAttr("cyclestreets_id", feature.getTag("cyclestreets_id"))
-                    .setAttr("fee", feature.getTag("fee"))
+                    .setAttr("osmNodeId", feature.id())
                     .setMinZoom(MIN_ZOOM_DETAILS);
             }
-            // TODO: amenity=kick-scooter_parking
         }
         // TODO: area versions of the point features like parking.
     }
