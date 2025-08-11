@@ -20,7 +20,7 @@
 
   <groupId>org.transitopia</groupId>
   <artifactId>planetiler-transitopia</artifactId>
-  <version>24.01.01</version>
+  <version>25.08.10</version>
 
   <name>Transitopia Vector Tile Schema implementation for Planetiler tool</name>
 

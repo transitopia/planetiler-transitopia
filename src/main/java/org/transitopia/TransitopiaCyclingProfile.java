@@ -9,7 +9,6 @@ import com.onthegomap.planetiler.reader.SourceFeature;
 import com.onthegomap.planetiler.reader.osm.OsmElement;
 import com.onthegomap.planetiler.stats.Stats;
 import com.onthegomap.planetiler.util.Translations;
-import java.util.List;
 import org.transitopia.layers.Cycling;
 
 /**
@@ -18,8 +17,6 @@ import org.transitopia.layers.Cycling;
 public class TransitopiaCyclingProfile extends ForwardingProfile {
 
   public static final String OSM_SOURCE = "osm";
-  /** Index to efficiently find the imposm3 "table row" constructor from an OSM element based on its tags. */
-  // private final MultiExpression.Index<RowDispatch> osmMappings;
 
   public TransitopiaCyclingProfile(Planetiler runner) {
     this(runner.translations(), runner.config(), runner.stats());

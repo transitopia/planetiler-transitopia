@@ -14,8 +14,7 @@ import java.util.List;
 
 
 public class Cycling implements
-    ForwardingProfile.HandlerForLayer,
-    ForwardingProfile.FeaturePostProcessor,
+    ForwardingProfile.LayerPostProcessor,
     ForwardingProfile.OsmRelationPreprocessor {
 
     private final PlanetilerConfig config;
@@ -246,20 +245,20 @@ public class Cycling implements
         double tolerance = config.tolerance(zoom);
         double minLength = coalesce(MIN_LENGTH.apply(zoom), 0).doubleValue();
 
-        // don't merge road segments with oneway tag
-        // TODO merge preserving oneway instead ignoring
+        // don't merge road segments with "oneway" tag
+        // TODO: merge while preserving "oneway" instead ignoring
         int onewayId = 1;
         for (var item : items) {
-            var oneway = item.attrs().get("oneway");
+            var oneway = item.tags().get("oneway");
             if (oneway instanceof Number n && n.intValue() == 1) {
-                item.attrs().put(LIMIT_MERGE_TAG, onewayId++);
+                item.tags().put(LIMIT_MERGE_TAG, onewayId++);
             }
         }
 
         var merged = FeatureMerge.mergeLineStrings(items, minLength, tolerance, BUFFER_SIZE);
 
         for (var item : merged) {
-            item.attrs().remove(LIMIT_MERGE_TAG);
+            item.tags().remove(LIMIT_MERGE_TAG);
         }
         return merged;
     }
